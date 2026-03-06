@@ -113,7 +113,6 @@ function statusFormatado() {
   text-transform: capitalize;
 }
 
-/* Cores por status */
 .badge.paraFazer {
   background: #b8b500;
   color: white;
@@ -144,7 +143,6 @@ button {
   transition: 0.2s;
 }
 
-/* Botão progresso */
 .progresso {
   background: #2563eb;
   color: white;
@@ -154,7 +152,6 @@ button {
   background: #1d4ed8;
 }
 
-/* Botão concluir */
 .concluir {
   background: #16a34a;
   color: white;
@@ -164,7 +161,6 @@ button {
   background: #15803d;
 }
 
-/* Botão remover */
 .remover {
   background: #dc2626;
   color: white;
