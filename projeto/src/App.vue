@@ -2,17 +2,54 @@
   <div class="app">
     <header class="topbar">
       <h1>Gerenciador de Tarefas</h1>
-
       <div class="nova">
         <input
           v-model="novaTarefa"
           placeholder="Nova tarefa..."
           @keyup.enter="adicionarTarefa"
         />
+
+        <select v-model="devSelecionado">
+          <option disabled :value="null">Selecionar dev</option>
+          <option
+            v-for="dev in desenvolvedores"
+            :key="dev.id"
+            :value="dev.id"
+          >
+            {{ dev.nome }}
+          </option>
+        </select>
+
         <button @click="adicionarTarefa">Adicionar</button>
       </div>
     </header>
 
+    <h2>Por Desenvolvedor</h2>
+    <div class="board">
+      <div
+        class="coluna"
+        v-for="dev in desenvolvedores"
+        :key="dev.id"
+      >
+        <h2>{{ dev.nome }} ({{ dev.cargo }})</h2>
+
+        <div
+          v-for="t in dev.tarefas"
+          :key="t.id"
+          class="card"
+        >
+          <CardTarefa
+            :tarefa="t"
+            :editavel="true"
+            @remover="removerTarefa"
+            @alterarStatus="alterarStatus"
+          />
+        </div>
+
+      </div>
+    </div>
+
+    <h2>Geral</h2>
     <div class="board">
       <div class="coluna">
         <h2>Para Fazer ({{ tarefasFazer.length }})</h2>
@@ -23,8 +60,8 @@
         >
           <CardTarefa
             :tarefa="t"
-            @remover="removerTarefa"
-            @alterarStatus="alterarStatus"
+            :devNome="encontrarDevDaTarefa(t.id)"
+            :editavel="false"
           />
         </div>
       </div>
@@ -38,8 +75,8 @@
         >
           <CardTarefa
             :tarefa="t"
-            @remover="removerTarefa"
-            @alterarStatus="alterarStatus"
+            :devNome="encontrarDevDaTarefa(t.id)"
+            :editavel="false"
           />
         </div>
       </div>
@@ -53,8 +90,8 @@
         >
           <CardTarefa
             :tarefa="t"
-            @remover="removerTarefa"
-            @alterarStatus="alterarStatus"
+            :devNome="encontrarDevDaTarefa(t.id)"
+            :editavel="false"
           />
         </div>
       </div>
@@ -66,53 +103,97 @@
 import CardTarefa from "./CardTarefa.vue"
 import type { Tarefa } from "./CardTarefa.vue"
 import { ref, computed } from "vue"
+import type { Desenvolvedor } from "./Desenvolvedores.vue"
 
 const tarefas = ref<Tarefa[]>([])
 const novaTarefa = ref("")
+const devSelecionado = ref<number | null>(null)
+const desenvolvedores = ref<Desenvolvedor[]>([
+  {
+    id: 1,
+    nome: "Gabriel",
+    cargo: "Senior",
+    tarefas: []
+  },
+  {
+    id: 2,
+    nome: "Camila",
+    cargo: "Pleno",
+    tarefas: []
+  },
+  {
+    id: 3,
+    nome: "Diego",
+    cargo: "Junior",
+    tarefas: []
+  }
+])
 let contadorId = 1
+
+function encontrarDevDaTarefa(tarefaId: number) {
+  const dev = desenvolvedores.value.find(dev =>
+    dev.tarefas.some(t => t.id === tarefaId)
+  )
+
+  return dev?.nome  
+}
 
 function adicionarTarefa() {
   if (!novaTarefa.value.trim()) return
+  if (!devSelecionado.value) return
 
-  tarefas.value.push({
+  const dev = desenvolvedores.value.find(
+    d => d.id === devSelecionado.value
+  )
+
+  if (!dev) return
+
+  dev.tarefas.push({
     id: contadorId++,
     titulo: novaTarefa.value,
-    status: "paraFazer",
+    status: "paraFazer"
   })
 
   novaTarefa.value = ""
 }
 
 function removerTarefa(id: number) {
-  tarefas.value = tarefas.value.filter(t => t.id !== id)
+  desenvolvedores.value.forEach(dev => {
+    dev.tarefas = dev.tarefas.filter(t => t.id !== id)
+  })
 }
 
 function alterarStatus(payload: { id: number; status: Tarefa["status"] }) {
-  const tarefa = tarefas.value.find(t => t.id === payload.id)
-  if (tarefa) {
-    tarefa.status = payload.status
-  }
+
+  desenvolvedores.value.forEach(dev => {
+
+    const tarefa = dev.tarefas.find(t => t.id === payload.id)
+
+    if (tarefa) {
+      tarefa.status = payload.status
+    }
+
+  })
 }
 
+const todasTarefas = computed(() =>
+  desenvolvedores.value.flatMap(dev => dev.tarefas)
+)
+
 const tarefasFazer = computed(() =>
-  tarefas.value.filter(t => t.status === "paraFazer")
+  todasTarefas.value.filter(t => t.status === "paraFazer")
 )
 
 const tarefasProgresso = computed(() =>
-  tarefas.value.filter(t => t.status === "progresso" || t.status === "pausado" )
+  todasTarefas.value.filter(t => t.status === "progresso" || t.status === "pausado")
 )
 
 const tarefasConcluidas = computed(() =>
-  tarefas.value.filter(t => t.status === "concluido")
+  todasTarefas.value.filter(t => t.status === "concluido")
 )
 </script>
 
 <style scoped>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 .app {
   background: #0f172a;
   min-height: 100vh;
@@ -153,6 +234,14 @@ const tarefasConcluidas = computed(() =>
   border-radius: 6px;
   color: white;
   cursor: pointer;
+}
+
+.nova select {
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  background: #1e293b;
+  color: white;
 }
 
 .board {

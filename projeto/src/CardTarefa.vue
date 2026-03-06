@@ -2,7 +2,9 @@
   <div class="card">
     <div class="top">
       <span class="titulo">{{ tarefa.titulo }}</span>
-
+      <span v-if="props.devNome" class="dev">
+        👨‍💻 {{ props.devNome }}
+      </span>
       <span
         class="status"
         :class="tarefa.status"
@@ -12,8 +14,9 @@
     </div>
 
     <div class="acoes">
+
       <button
-        v-if="['paraFazer', 'pausado'].includes(tarefa.status)"
+        v-if="props.editavel && ['paraFazer', 'pausado'].includes(tarefa.status)"
         class="progresso"
         @click="mudarStatus('progresso')"
       >
@@ -21,7 +24,7 @@
       </button>
 
       <button
-        v-if="tarefa.status === 'progresso'"
+        v-if="props.editavel && tarefa.status === 'progresso'"
         class="concluir"
         @click="mudarStatus('concluido')"
       >
@@ -29,7 +32,7 @@
       </button>
 
       <button
-        v-if="tarefa.status === 'progresso'"
+        v-if="props.editavel && tarefa.status === 'progresso'"
         class="pausado"
         @click="mudarStatus('pausado')"
       >
@@ -37,6 +40,7 @@
       </button>
 
       <button
+        v-if="props.editavel"
         class="remover"
         @click="remover"
       >
@@ -56,6 +60,8 @@ export interface Tarefa {
 
 const props = defineProps<{
   tarefa: Tarefa
+  editavel?: boolean
+  devNome?: string
 }>()
 
 const emit = defineEmits<{
@@ -70,7 +76,7 @@ function remover() {
 function mudarStatus(status: Tarefa["status"]) {
   emit("alterarStatus", {
     id: props.tarefa.id,
-    status,
+    status
   })
 }
 function statusFormatado() {
@@ -193,5 +199,11 @@ button {
 
 .remover:hover {
   background: #b91c1c;
+}
+
+.dev {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-left: 6px;
 }
 </style>
