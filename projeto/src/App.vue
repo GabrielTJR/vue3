@@ -44,7 +44,6 @@
         </div>
       </div>
 
-      <!-- CONCLUÍDO -->
       <div class="coluna">
         <h2>Concluído ({{ tarefasConcluidas.length }})</h2>
         <div
