@@ -65,13 +65,8 @@
 
 <script setup lang="ts">
 import CardTarefa from "./CardTarefa.vue"
+import type { Tarefa } from "./CardTarefa.vue"
 import { ref, computed } from "vue"
-
-interface Tarefa {
-  id: number
-  titulo: string
-  status: "paraFazer" | "progresso" | "concluido"
-}
 
 const tarefas = ref<Tarefa[]>([])
 const novaTarefa = ref("")
@@ -105,7 +100,7 @@ const tarefasFazer = computed(() =>
 )
 
 const tarefasProgresso = computed(() =>
-  tarefas.value.filter(t => t.status === "progresso")
+  tarefas.value.filter(t => t.status === "progresso" || t.status === "pausado" )
 )
 
 const tarefasConcluidas = computed(() =>

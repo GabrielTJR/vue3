@@ -4,7 +4,7 @@
       <span class="titulo">{{ tarefa.titulo }}</span>
 
       <span
-        class="badge"
+        class="status"
         :class="tarefa.status"
       >
         {{ statusFormatado() }}
@@ -13,7 +13,7 @@
 
     <div class="acoes">
       <button
-        v-if="tarefa.status === 'paraFazer'"
+        v-if="['paraFazer', 'pausado'].includes(tarefa.status)"
         class="progresso"
         @click="mudarStatus('progresso')"
       >
@@ -26,6 +26,14 @@
         @click="mudarStatus('concluido')"
       >
         Concluir
+      </button>
+
+      <button
+        v-if="tarefa.status === 'progresso'"
+        class="pausado"
+        @click="mudarStatus('pausado')"
+      >
+        Pausar
       </button>
 
       <button
@@ -43,7 +51,7 @@
 export interface Tarefa {
   id: number
   titulo: string
-  status: "paraFazer" | "progresso" | "concluido"
+  status: "paraFazer" | "progresso" | "concluido" | "pausado"
 }
 
 const props = defineProps<{
@@ -73,6 +81,8 @@ function statusFormatado() {
       return "Em Progresso"
     case "concluido":
       return "Concluído"
+    case "pausado":
+      return "Pausado"
   }
 }
 </script>
@@ -106,26 +116,31 @@ function statusFormatado() {
   color: #f1f5f9;
 }
 
-.badge {
+.status {
   font-size: 11px;
   padding: 4px 8px;
   border-radius: 20px;
   text-transform: capitalize;
 }
 
-.badge.paraFazer {
-  background: #b8b500;
-  color: white;
+.status.pausado {
+  background: #8e9100;
+  color: #ffffff;
 }
 
-.badge.progresso {
+.status.paraFazer {
+  background: #ffffff;
+  color: #000000;
+}
+
+.status.progresso {
   background: #1d4ed8;
-  color: white;
+  color: #ffffff;
 }
 
-.badge.concluido {
+.status.concluido {
   background: #15803d;
-  color: white;
+  color: #ffffff;
 }
 
 .acoes {
@@ -144,7 +159,7 @@ button {
 }
 
 .progresso {
-  background: #2563eb;
+  background: #2564eba8;
   color: white;
 }
 
@@ -153,7 +168,7 @@ button {
 }
 
 .concluir {
-  background: #16a34a;
+  background: #16a34aa8;
   color: white;
 }
 
@@ -161,8 +176,18 @@ button {
   background: #15803d;
 }
 
+.pausado {
+  background: #c4c700a8;
+  color: #ffffff;
+}
+
+.pausado:hover {
+  background: #8e9100;
+  color: #ffffff;
+}
+
 .remover {
-  background: #dc2626;
+  background: #dc2626a8;
   color: white;
 }
 
