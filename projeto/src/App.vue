@@ -241,7 +241,7 @@ const tarefasConcluidas = computed(() =>
   border-radius: 6px;
   border: none;
   background: #1e293b;
-  color: white;
+  color: white; 
 }
 
 .board {
