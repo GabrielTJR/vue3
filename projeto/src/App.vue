@@ -1,7 +1,10 @@
 <template>
   <div class="app">
     <header class="topbar">
-      <h1>Gerenciador de Tarefas</h1>
+      <div class="title">
+        <span class="gt">GT</span>
+        <h1>Gerenciador de Tarefas</h1>
+      </div>
       <div class="nova">
         <input
           v-model="novaTarefa"
@@ -23,76 +26,82 @@
         <button @click="adicionarTarefa">Adicionar</button>
       </div>
     </header>
+    <div class="apresentacao">
+      <div class="selecao">
+        <OptionsView/>
+      </div>
+      <div class="infos">
+        <h2>Por Desenvolvedor</h2>
+        <div class="board">
+          <div
+            class="coluna"
+            v-for="dev in desenvolvedores"
+            :key="dev.id"
+          >
+            <h2>{{ dev.nome }} ({{ dev.cargo }})</h2>
 
-    <h2>Por Desenvolvedor</h2>
-    <div class="board">
-      <div
-        class="coluna"
-        v-for="dev in desenvolvedores"
-        :key="dev.id"
-      >
-        <h2>{{ dev.nome }} ({{ dev.cargo }})</h2>
+            <div
+              v-for="t in dev.tarefas"
+              :key="t.id"
+              class="card"
+            >
+              <CardTarefa
+                :tarefa="t"
+                :editavel="true"
+                @remover="removerTarefa"
+                @alterarStatus="alterarStatus"
+              />
+            </div>
 
-        <div
-          v-for="t in dev.tarefas"
-          :key="t.id"
-          class="card"
-        >
-          <CardTarefa
-            :tarefa="t"
-            :editavel="true"
-            @remover="removerTarefa"
-            @alterarStatus="alterarStatus"
-          />
+          </div>
         </div>
 
-      </div>
-    </div>
+        <h2>Geral</h2>
+        <div class="board">
+          <div class="coluna">
+            <h2>Para Fazer ({{ tarefasFazer.length }})</h2>
+            <div
+              v-for="t in tarefasFazer"
+              :key="t.id"
+              class="card"
+            >
+              <CardTarefa
+                :tarefa="t"
+                :devNome="encontrarDevDaTarefa(t.id)"
+                :editavel="false"
+              />
+            </div>
+          </div>
 
-    <h2>Geral</h2>
-    <div class="board">
-      <div class="coluna">
-        <h2>Para Fazer ({{ tarefasFazer.length }})</h2>
-        <div
-          v-for="t in tarefasFazer"
-          :key="t.id"
-          class="card"
-        >
-          <CardTarefa
-            :tarefa="t"
-            :devNome="encontrarDevDaTarefa(t.id)"
-            :editavel="false"
-          />
-        </div>
-      </div>
+          <div class="coluna">
+            <h2>Em Progresso ({{ tarefasProgresso.length }})</h2>
+            <div
+              v-for="t in tarefasProgresso"
+              :key="t.id"
+              class="card"
+            >
+              <CardTarefa
+                :tarefa="t"
+                :devNome="encontrarDevDaTarefa(t.id)"
+                :editavel="false"
+              />
+            </div>
+          </div>
 
-      <div class="coluna">
-        <h2>Em Progresso ({{ tarefasProgresso.length }})</h2>
-        <div
-          v-for="t in tarefasProgresso"
-          :key="t.id"
-          class="card"
-        >
-          <CardTarefa
-            :tarefa="t"
-            :devNome="encontrarDevDaTarefa(t.id)"
-            :editavel="false"
-          />
-        </div>
-      </div>
-
-      <div class="coluna">
-        <h2>Concluído ({{ tarefasConcluidas.length }})</h2>
-        <div
-          v-for="t in tarefasConcluidas"
-          :key="t.id"
-          class="card"
-        >
-          <CardTarefa
-            :tarefa="t"
-            :devNome="encontrarDevDaTarefa(t.id)"
-            :editavel="false"
-          />
+          <div class="coluna">
+            <h2>Concluído ({{ tarefasConcluidas.length }})</h2>
+            <div
+              v-for="t in tarefasConcluidas"
+              :key="t.id"
+              class="card"
+            >
+              <CardTarefa
+                :tarefa="t"
+                :devNome="encontrarDevDaTarefa(t.id)"
+                :editavel="false"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -104,9 +113,11 @@ import CardTarefa from "./CardTarefa.vue"
 import type { Tarefa } from "./CardTarefa.vue"
 import { ref, computed } from "vue"
 import type { Desenvolvedor } from "./Desenvolvedores.vue"
+import OptionsView from "./OptionsView.vue"
 
 const tarefas = ref<Tarefa[]>([])
 const novaTarefa = ref("")
+const optionsView = OptionsView
 const devSelecionado = ref<number | null>(null)
 const desenvolvedores = ref<Desenvolvedor[]>([
   {
@@ -195,23 +206,54 @@ const tarefasConcluidas = computed(() =>
 
 <style scoped>
 .app {
-  background: #0f172a;
-  min-height: 100vh;
-  color: #f1f5f9;
-  font-family: Inter, sans-serif;
-  padding: 30px;
+  background: #000000;
+  min-height: 100vh;  
+  color: #EEEEEE;
+  font-family: sans-serif;
+  font-weight: normal;
+  padding: 10px;
 }
 
 .topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 40px;
+  padding: 0 20px 0 20px; 
+  border-bottom: 1px solid #0E0E0E;
+}
+
+.topbar .title{
+  display: flex;
+  align-items: center;
+}
+
+.topbar .gt{
+  border-radius: 5px;
+  font-weight: bold;
+  padding: 6px;
+  margin-right: 5px;
+  color: black;
+  background: #EEEEEE;
 }
 
 .topbar h1 {
   font-size: 24px;
   font-weight: bold;
+}
+
+.apresentacao{
+  display: flex;
+  box-sizing: border-box;
+  justify-content: space-around ;
+}
+
+.selecao{  
+  width: 15%;
+}
+
+.infos{
+  width: 85%;
+  padding: 8px 12px;
 }
 
 .nova {
