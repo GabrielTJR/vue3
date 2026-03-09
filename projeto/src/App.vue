@@ -27,9 +27,19 @@
       </div>
     </header>
     <div class="apresentacao">
-      <div class="selecao">
-        <OptionsView/>
-      </div>
+      <nav class="selecao">          
+        <p>VISUALIZAÇÕES</p>
+        <button
+        v-for="v in views"
+        :key="v.id"
+        class="view"
+        :class="{ 'view-ativa': viewAtual === v.id }" 
+        @click="viewAtual = v.id">
+          <OptionsView
+          :optionView="v"
+          />
+        </button>
+      </nav>
       <div class="infos">
         <h2>Por Desenvolvedor</h2>
         <div class="board">
@@ -114,6 +124,10 @@ import type { Tarefa } from "./CardTarefa.vue"
 import { ref, computed } from "vue"
 import type { Desenvolvedor } from "./Desenvolvedores.vue"
 import OptionsView from "./OptionsView.vue"
+import type { optionView } from "./OptionsView.vue"
+import dev from "./icons/dev.vue"
+import pasta from "./icons/pasta.vue"
+import quadro from "./icons/quadro.vue"
 
 const tarefas = ref<Tarefa[]>([])
 const novaTarefa = ref("")
@@ -140,6 +154,24 @@ const desenvolvedores = ref<Desenvolvedor[]>([
   }
 ])
 let contadorId = 1
+const viewAtual = ref(1)
+const views = ref<optionView[]>([
+  {
+    id: 1,
+    nome: "Quadro Kanban",
+    image: quadro
+  },
+  {
+    id: 2,
+    nome: "Por Desenvolvedor",
+    image: dev
+  },
+  {
+    id: 3,
+    nome: "Todas as Tarefas",
+    image: pasta
+  }
+])
 
 function encontrarDevDaTarefa(tarefaId: number) {
   const dev = desenvolvedores.value.find(dev =>
@@ -211,7 +243,6 @@ const tarefasConcluidas = computed(() =>
   color: #EEEEEE;
   font-family: sans-serif;
   font-weight: normal;
-  padding: 10px;
 }
 
 .topbar {
@@ -241,19 +272,31 @@ const tarefasConcluidas = computed(() =>
   font-weight: bold;
 }
 
-.apresentacao{
+.selecao {
+  font-size: 12px;
+  padding: 20px 20px 20px 10px; /* Dei um pouco mais de respiro (padding) na direita para a borda não grudar no botão */
+  font-family: sans-serif;
+  font-weight: bold;
+  color: #808080;
+  min-width: 220px; /* Largura mínima previsível para o seu menu */
+  min-height: 100vh; /* Faz a borda lateral ir até o fim da tela */
+  border-right: 1px solid #0E0E0E;  
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  box-sizing: border-box; /* Garante que o padding não quebre o tamanho final */
+}
+
+.apresentacao {
   display: flex;
   box-sizing: border-box;
-  justify-content: space-around ;
+  /* Removido o justify-content: space-around; pois usaremos flex: 1 nos filhos */
 }
 
-.selecao{  
-  width: 15%;
-}
-
-.infos{
-  width: 85%;
-  padding: 8px 12px;
+.infos {
+  flex: 1; /* A mágica acontece aqui: isso manda a div ocupar todo o espaço restante da tela, sem invadir o menu */
+  padding: 20px;
+  min-width: 0; /* Previne um bug comum do flexbox onde o conteúdo interno força a div a vazar da tela */
 }
 
 .nova {
@@ -315,5 +358,41 @@ const tarefasConcluidas = computed(() =>
 .card:hover {
   transform: translateY(-2px);
   background: #3f4d66;
+}
+
+.view {
+  background-color: #000000; 
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Garante que o ícone e o texto fiquem alinhados à esquerda */
+  padding: 8px 12px;
+  background: none;
+  border: none;
+  color: #808080;
+  box-sizing: border-box;
+  text-transform: none;
+  gap: 5px;
+  white-space: nowrap;
+  border-radius: 15px;
+  width: 100%; /* Faz o fundo do botão preencher o menu corretamente */
+}
+
+.view:hover{
+  background-color: #0A0A0A;
+  color: #EEEEEE;
+}
+
+.view:active{
+  transform: scale(0.96);
+}
+
+.view-ativa {
+  background-color: #121212;
+  color: #EEE8E0;
+}
+
+.view-ativa .icone-svg {
+  color: #EEE8E0;
 }
 </style>
