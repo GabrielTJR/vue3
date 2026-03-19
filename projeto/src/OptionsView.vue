@@ -1,7 +1,7 @@
 <template>
     <div class="option">
         <component :is="optionView.image" class="icone-svg" />
-        {{optionView.nome}}
+        <span>{{optionView.nome}}</span>
     </div>
 </template>
 
@@ -21,5 +21,10 @@
     display:flex;
     align-items:center;
     gap:6px;
+    }
+    @media (max-width: 500px) {
+        span {
+            display: none;
+        }
     }
 </style>

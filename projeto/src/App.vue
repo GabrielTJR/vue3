@@ -41,76 +41,95 @@
         </button>
       </nav>
       <div class="infos">
-        <h2>Por Desenvolvedor</h2>
-        <div class="board">
-          <div
-            class="coluna"
-            v-for="dev in desenvolvedores"
-            :key="dev.id"
-          >
-            <h2>{{ dev.nome }} ({{ dev.cargo }})</h2>
-
+        <div v-if="viewAtual === 2">
+          <h2>Por Desenvolvedor</h2>
+          <div class="board">
             <div
-              v-for="t in dev.tarefas"
-              :key="t.id"
-              class="card"
+              class="coluna"
+              v-for="dev in desenvolvedores"
+              :key="dev.id"
             >
-              <CardTarefa
-                :tarefa="t"
-                :editavel="true"
-                @remover="removerTarefa"
-                @alterarStatus="alterarStatus"
-              />
+              <h2>{{ dev.nome }} ({{ dev.cargo }})</h2>
+              <div
+                v-for="t in dev.tarefas"
+                :key="t.id"
+                class="card"
+              >
+                <CardTarefa
+                  :tarefa="t"
+                  :editavel="true"
+                  @remover="removerTarefa"
+                  @alterarStatus="alterarStatus"
+                />
+              </div>
             </div>
-
           </div>
         </div>
 
-        <h2>Geral</h2>
-        <div class="board">
-          <div class="coluna">
-            <h2>Para Fazer ({{ tarefasFazer.length }})</h2>
-            <div
-              v-for="t in tarefasFazer"
-              :key="t.id"
-              class="card"
-            >
-              <CardTarefa
-                :tarefa="t"
-                :devNome="encontrarDevDaTarefa(t.id)"
-                :editavel="false"
-              />
+        <div v-else-if="viewAtual === 1">
+          <h2>Geral</h2>
+          <div class="board">
+            <div class="coluna">
+              <h2>Para Fazer ({{ tarefasFazer.length }})</h2>
+              <div
+                v-for="t in tarefasFazer"
+                :key="t.id"
+                class="card"
+              >
+                <CardTarefa
+                  :tarefa="t"
+                  :devNome="encontrarDevDaTarefa(t.id)"
+                  :editavel="false"
+                />
+              </div>
+            </div>
+            <div class="coluna">
+              <h2>Em Progresso ({{ tarefasProgresso.length }})</h2>
+              <div
+                v-for="t in tarefasProgresso"
+                :key="t.id"
+                class="card"
+              >
+                <CardTarefa
+                  :tarefa="t"
+                  :devNome="encontrarDevDaTarefa(t.id)"
+                  :editavel="false"
+                />
+              </div>
+            </div>
+            <div class="coluna">
+              <h2>Concluído ({{ tarefasConcluidas.length }})</h2>
+              <div
+                v-for="t in tarefasConcluidas"
+                :key="t.id"
+                class="card"
+              >
+                <CardTarefa
+                  :tarefa="t"
+                  :devNome="encontrarDevDaTarefa(t.id)"
+                  :editavel="false"
+                />
+              </div>
             </div>
           </div>
+        </div>
 
-          <div class="coluna">
-            <h2>Em Progresso ({{ tarefasProgresso.length }})</h2>
-            <div
-              v-for="t in tarefasProgresso"
-              :key="t.id"
-              class="card"
-            >
-              <CardTarefa
-                :tarefa="t"
-                :devNome="encontrarDevDaTarefa(t.id)"
-                :editavel="false"
-              />
-            </div>
-          </div>
-
-          <div class="coluna">
-            <h2>Concluído ({{ tarefasConcluidas.length }})</h2>
-            <div
-              v-for="t in tarefasConcluidas"
-              :key="t.id"
-              class="card"
-            >
-              <CardTarefa
-                :tarefa="t"
-                :devNome="encontrarDevDaTarefa(t.id)"
-                :editavel="false"
-              />
-            </div>
+        <div v-else-if="viewAtual===3">
+          <div class="board">
+            <div class="coluna">
+                <h2>Todas as tarefas</h2>
+                <div
+                  v-for="t in todasTarefas"
+                  :key="t.id"
+                  class="card"
+                >
+                  <CardTarefa
+                    :tarefa="t"
+                    :devNome="encontrarDevDaTarefa(t.id)"
+                    :editavel="false"
+                  />
+                </div>
+              </div>
           </div>
         </div>
       </div>
@@ -237,6 +256,11 @@ const tarefasConcluidas = computed(() =>
 </script>
 
 <style scoped>
+
+* {
+  box-sizing: border-box;
+}
+
 .app {
   background: #000000;
   min-height: 100vh;  
@@ -285,6 +309,7 @@ const tarefasConcluidas = computed(() =>
   flex-direction: column;
   align-items: stretch;
   box-sizing: border-box; /* Garante que o padding não quebre o tamanho final */
+  overflow-x: auto;
 }
 
 .apresentacao {
@@ -331,7 +356,7 @@ const tarefasConcluidas = computed(() =>
 
 .board {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
 }
 
@@ -376,6 +401,7 @@ const tarefasConcluidas = computed(() =>
   white-space: nowrap;
   border-radius: 15px;
   width: 100%; /* Faz o fundo do botão preencher o menu corretamente */
+  flex-shrink: 0;
 }
 
 .view:hover{
@@ -394,5 +420,50 @@ const tarefasConcluidas = computed(() =>
 
 .view-ativa .icone-svg {
   color: #EEE8E0;
+}
+
+@media (max-width: 768px) {
+  .apresentacao {
+    flex-direction: column;
+  }
+
+  .selecao {
+    flex-direction: row;
+    min-width: 100%;
+    min-height: auto;
+    border-right: none;
+    border-bottom: 1px solid #0E0E0E;
+    overflow-x: auto;
+  }
+
+  .view{
+    width: auto;
+  }
+
+  .infos {
+    padding: 10px;
+  }
+
+  .board {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .nova {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .nova input,
+  .nova select,
+  .nova button {
+    flex: 1;
+    min-width: 120px;
+  }
 }
 </style>
