@@ -1,5 +1,6 @@
 <template>
-  <div class="app">
+  <Login v-if="!logado" @loginSucesso="logado = true" />
+  <div v-else class="app">
     <header class="topbar">
       <div class="title">
         <span class="gt">GT</span>
@@ -11,7 +12,6 @@
           placeholder="Nova tarefa..."
           @keyup.enter="adicionarTarefa"
         />
-
         <select v-model="devSelecionado">
           <option disabled :value="null">Selecionar dev</option>
           <option
@@ -22,23 +22,23 @@
             {{ dev.nome }}
           </option>
         </select>
-
         <button @click="adicionarTarefa">Adicionar</button>
       </div>
     </header>
     <div class="apresentacao">
-      <nav class="selecao">          
-        <p>VISUALIZAÇÕES</p>
-        <button
-        v-for="v in views"
-        :key="v.id"
-        class="view"
-        :class="{ 'view-ativa': viewAtual === v.id }" 
-        @click="viewAtual = v.id">
-          <OptionsView
-          :optionView="v"
-          />
-        </button>
+      <nav class="selecao">
+        <p class="titulo-selecao">VISUALIZAÇÕES</p>
+        <div class="views-container">
+          <button
+            v-for="v in views"
+            :key="v.id"
+            class="view"
+            :class="{ 'view-ativa': viewAtual === v.id }"
+            @click="viewAtual = v.id"
+          >
+            <OptionsView :optionView="v" />
+          </button>
+        </div>
       </nav>
       <div class="infos">
         <div v-if="viewAtual === 2">
@@ -65,7 +65,6 @@
             </div>
           </div>
         </div>
-
         <div v-else-if="viewAtual === 1">
           <h2>Geral</h2>
           <div class="board">
@@ -113,11 +112,10 @@
             </div>
           </div>
         </div>
-
         <div v-else-if="viewAtual===3">
+          <h2>Todas as tarefas</h2>
           <div class="board">
             <div class="coluna">
-                <h2>Todas as tarefas</h2>
                 <div
                   v-for="t in todasTarefas"
                   :key="t.id"
@@ -135,6 +133,7 @@
       </div>
     </div>
   </div>
+  
 </template>
 
 <script setup lang="ts">
@@ -147,7 +146,9 @@ import type { optionView } from "./OptionsView.vue"
 import dev from "./icons/dev.vue"
 import pasta from "./icons/pasta.vue"
 import quadro from "./icons/quadro.vue"
+import Login from "./Login.vue"
 
+const logado = ref(false)
 const tarefas = ref<Tarefa[]>([])
 const novaTarefa = ref("")
 const optionsView = OptionsView
@@ -263,7 +264,7 @@ const tarefasConcluidas = computed(() =>
 
 .app {
   background: #000000;
-  min-height: 100vh;  
+  height: 100vh;
   color: #EEEEEE;
   font-family: sans-serif;
   font-weight: normal;
@@ -298,12 +299,12 @@ const tarefasConcluidas = computed(() =>
 
 .selecao {
   font-size: 12px;
-  padding: 20px 20px 20px 10px; /* Dei um pouco mais de respiro (padding) na direita para a borda não grudar no botão */
+  padding: 20px 20px 20px 10px;
   font-family: sans-serif;
   font-weight: bold;
   color: #808080;
-  min-width: 220px; /* Largura mínima previsível para o seu menu */
-  min-height: 100vh; /* Faz a borda lateral ir até o fim da tela */
+  min-width: 220px;
+  min-height: 90%;
   border-right: 1px solid #0E0E0E;  
   display: flex;
   flex-direction: column;
@@ -364,7 +365,7 @@ const tarefasConcluidas = computed(() =>
   background: #1e293b;
   padding: 15px;
   border-radius: 12px;
-  min-height: 500px;
+  min-height: 400px;
 }
 
 .coluna h2 {
@@ -423,21 +424,28 @@ const tarefasConcluidas = computed(() =>
 }
 
 @media (max-width: 768px) {
+  .app{
+    height: auto;
+  }
   .apresentacao {
     flex-direction: column;
   }
 
   .selecao {
-    flex-direction: row;
-    min-width: 100%;
-    min-height: auto;
-    border-right: none;
-    border-bottom: 1px solid #0E0E0E;
-    overflow-x: auto;
+    flex-direction: column; /* título em cima */
+    gap: 10px;
   }
 
-  .view{
-    width: auto;
+  .views-container {
+    display: flex;
+    flex-direction: row; /* botões lado a lado */
+    gap: 10px;
+    overflow-x: auto; /* scroll se não couber */
+  }
+
+  .view {
+    width: auto; /* importante */
+    flex-shrink: 0; /* não esmagar */
   }
 
   .infos {
