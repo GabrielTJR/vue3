@@ -50,7 +50,7 @@ function fazerLogin() {
 <style scoped>
 .login-container {
   height: 100vh;
-  background: #000;
+  background: #EFEFEF;
   display: flex;
   align-items: center;
   justify-content: center;

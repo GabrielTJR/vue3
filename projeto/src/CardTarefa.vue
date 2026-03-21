@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="box_card">
     <div class="top">
       <span class="titulo">{{ tarefa.titulo }}</span>
       <span v-if="props.devNome" class="dev">
@@ -95,7 +95,7 @@ function statusFormatado() {
 
 
 <style scoped>
-.card {
+.box_card {
   background: #1e293b;
   padding: 14px;
   border-radius: 12px;
@@ -105,7 +105,7 @@ function statusFormatado() {
   transition: 0.2s;
 }
 
-.card:hover {
+.box_card:hover {
   background: #263449;
   transform: translateY(-2px);
 }

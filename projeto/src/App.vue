@@ -263,9 +263,9 @@ const tarefasConcluidas = computed(() =>
 }
 
 .app {
-  background: #000000;
+  background: #EFEFEF;
   height: 100vh;
-  color: #EEEEEE;
+  color: #000000;
   font-family: sans-serif;
   font-weight: normal;
 }
@@ -283,13 +283,21 @@ const tarefasConcluidas = computed(() =>
   align-items: center;
 }
 
+.topbar .nova input{
+  background: #3C3F50;
+}
+
+.topbar .nova select{
+  background: #3C3F50;
+}
+
 .topbar .gt{
   border-radius: 5px;
   font-weight: bold;
   padding: 6px;
   margin-right: 5px;
   color: black;
-  background: #EEEEEE;
+  background: #0524DD;
 }
 
 .topbar h1 {
@@ -302,7 +310,7 @@ const tarefasConcluidas = computed(() =>
   padding: 20px 20px 20px 10px;
   font-family: sans-serif;
   font-weight: bold;
-  color: #808080;
+  color: #000000;
   min-width: 220px;
   min-height: 90%;
   border-right: 1px solid #0E0E0E;  
@@ -339,11 +347,11 @@ const tarefasConcluidas = computed(() =>
 }
 
 .nova button {
-  background: #3b82f6;
+  background: #0524DD;
   border: none;
   padding: 8px 14px;
   border-radius: 6px;
-  color: white;
+  color: #FFFFFF;
   cursor: pointer;
 }
 
@@ -362,7 +370,8 @@ const tarefasConcluidas = computed(() =>
 }
 
 .coluna {
-  background: #1e293b;
+  background: #0524DD;
+  color: #FFFFFF;
   padding: 15px;
   border-radius: 12px;
   min-height: 400px;
@@ -374,6 +383,7 @@ const tarefasConcluidas = computed(() =>
 }
 
 .card {
+  color: #0524DD;
   background: #334155;
   padding: 12px;
   border-radius: 8px;
@@ -387,7 +397,6 @@ const tarefasConcluidas = computed(() =>
 }
 
 .view {
-  background-color: #000000; 
   margin-bottom: 5px;
   display: flex;
   align-items: center;
@@ -395,7 +404,7 @@ const tarefasConcluidas = computed(() =>
   padding: 8px 12px;
   background: none;
   border: none;
-  color: #808080;
+  color: #000000;
   box-sizing: border-box;
   text-transform: none;
   gap: 5px;
@@ -406,7 +415,7 @@ const tarefasConcluidas = computed(() =>
 }
 
 .view:hover{
-  background-color: #0A0A0A;
+  background-color: #0524DD;
   color: #EEEEEE;
 }
 
@@ -415,7 +424,7 @@ const tarefasConcluidas = computed(() =>
 }
 
 .view-ativa {
-  background-color: #121212;
+  background-color: #0524DD;
   color: #EEE8E0;
 }
 
